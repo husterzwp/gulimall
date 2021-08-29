@@ -1,20 +1,24 @@
 package com.zwp.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zwp.gulimall.common.utils.PageUtils;
+import com.zwp.gulimall.common.utils.R;
+import com.zwp.gulimall.product.entity.BrandEntity;
+import com.zwp.gulimall.product.entity.CategoryBrandRelationEntity;
+import com.zwp.gulimall.product.service.CategoryBrandRelationService;
+import com.zwp.gulimall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zwp.gulimall.product.entity.CategoryBrandRelationEntity;
-import com.zwp.gulimall.product.service.CategoryBrandRelationService;
-import com.zwp.gulimall.common.utils.PageUtils;
-import com.zwp.gulimall.common.utils.R;
-
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -29,6 +33,37 @@ import com.zwp.gulimall.common.utils.R;
 public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    /**
+     * 获取当前品牌关联的所有分类列表
+     */
+    @GetMapping(value = "/catelog/list")
+    //@RequiresPermissions("product:categorybrandrelation:list")
+    public R catelogList(@RequestParam Map<String, Object> params,@RequestParam("brandId") Long brandId){
+
+        List<CategoryBrandRelationEntity> data = categoryBrandRelationService.
+                list(new QueryWrapper<CategoryBrandRelationEntity>().eq("brand_id",brandId));
+
+        return R.ok().put("data", data);
+    }
+
+    /**
+     * /product/categorybrandrelation/brands/list
+     * 1、Controller：处理请求，接收和效验数据
+     * 2、Service接收Controller传来的数据，进行业务处理
+     * 3、Controller接收Service处理完的数据，封装页面指定的vo
+     */
+    @GetMapping(value = "/brands/list")
+    public R relationBransList(@RequestParam(value = "catId",required = true) Long catId) {
+        List<BrandEntity> vos = categoryBrandRelationService.getBrandsByCatId(catId);
+        List<BrandVo> collect = vos.stream().map(item -> {
+            BrandVo brandVo = new BrandVo();
+            brandVo.setBrandId(item.getBrandId());
+            brandVo.setBrandName(item.getName());
+            return brandVo;
+        }).collect(Collectors.toList());
+        return R.ok().put("data",collect);
+    }
 
     /**
      * 列表
@@ -59,7 +94,7 @@ public class CategoryBrandRelationController {
     @RequestMapping("/save")
    // @RequiresPermissions("product:categorybrandrelation:save")
     public R save(@RequestBody CategoryBrandRelationEntity categoryBrandRelation){
-		categoryBrandRelationService.save(categoryBrandRelation);
+		categoryBrandRelationService.saveDetail(categoryBrandRelation);
 
         return R.ok();
     }

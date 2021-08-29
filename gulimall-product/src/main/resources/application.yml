@@ -4,11 +4,29 @@ spring:
     password: 123456
     url: jdbc:mysql://47.107.63.235:3307/gulimall_pms
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+#    alicloud:
+#      access-key: LTAI5tGHGY2wwUqDAPMTNq5j
+#      secret-key: yrbHrhkLwidygi9eIkJI49EFlAMLAa
+#      oss:
+#        endpoint: oss-cn-shenzhen.aliyuncs.com
 mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*.xml   #classpath扫描当前类路径，classpath*扫描所有类路径
+  mapper-locations: classpath:/mapper/**/*.xml
   global-config:
     db-config:
-      id-type: auto   #配置自增主键
+      id-type: auto   # 配置自增索引
+      #逻辑删除
+      logic-delete-value: 1
+      logic-not-delete-value: 0
 
 server:
-  port: 10000
+  port: 10001
+logging:
+  level:
+    com.zwp.gulimall: debug

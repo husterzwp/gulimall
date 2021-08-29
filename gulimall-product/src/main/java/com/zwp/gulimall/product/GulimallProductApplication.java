@@ -3,6 +3,8 @@ package com.zwp.gulimall.product;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * 1、整合MyBatis-Plus
@@ -51,12 +53,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *  1）、编写异常处理类，使用@ControllerAdvice。
  *  2）、使用@ExceptionHandler标注方法可以处理的异常。
  */
+@EnableDiscoveryClient
 @MapperScan("com.zwp.gulimall.product.dao")
+@EnableFeignClients(basePackages = "com.zwp.gulimall.product.feign")
 @SpringBootApplication
 public class GulimallProductApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(GulimallProductApplication.class, args);
 	}
-
 }

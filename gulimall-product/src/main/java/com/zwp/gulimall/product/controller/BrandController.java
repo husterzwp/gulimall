@@ -1,19 +1,22 @@
 package com.zwp.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.zwp.gulimall.common.utils.PageUtils;
+import com.zwp.gulimall.common.utils.R;
+import com.zwp.gulimall.common.valid.AddGroup;
+import com.zwp.gulimall.common.valid.UpdateGroup;
+import com.zwp.gulimall.common.valid.UpdateStatusGroup;
+import com.zwp.gulimall.product.entity.BrandEntity;
+import com.zwp.gulimall.product.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zwp.gulimall.product.entity.BrandEntity;
-import com.zwp.gulimall.product.service.BrandService;
-import com.zwp.gulimall.common.utils.PageUtils;
-import com.zwp.gulimall.common.utils.R;
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -54,11 +57,11 @@ public class BrandController {
     }
 
     /**
-     * 保存
+     * 保存 @Valid表示需要进行JSR303校验
      */
     @RequestMapping("/save")
    // @RequiresPermissions("product:brand:save")
-    public R save(@RequestBody BrandEntity brand){
+    public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand){
 		brandService.save(brand);
 
         return R.ok();
@@ -69,9 +72,18 @@ public class BrandController {
      */
     @RequestMapping("/update")
    // @RequiresPermissions("product:brand:update")
-    public R update(@RequestBody BrandEntity brand){
-		brandService.updateById(brand);
+    public R update(@Validated(UpdateGroup.class) @RequestBody BrandEntity brand){
+		brandService.updateDetail(brand);
+        return R.ok();
+    }
 
+    /**
+     * 修改状态
+     */
+    @RequestMapping("/update/status")
+    // @RequiresPermissions("product:brand:update")
+    public R updateStatus(@Validated(UpdateStatusGroup.class) @RequestBody BrandEntity brand){
+        brandService.updateById(brand);
         return R.ok();
     }
 
